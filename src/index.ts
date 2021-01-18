@@ -5,7 +5,7 @@ import { Server } from "colyseus"
 import { monitor } from "@colyseus/monitor"
 // import socialRoutes from "@colyseus/social/express"
 
-import { spotitRoom } from "./rooms/spotitRoom"
+import { spotit } from "./rooms/spotitRoom"
 
 const port = Number(process.env.PORT || 2567)
 const app = express()
@@ -19,7 +19,7 @@ const gameServer = new Server({
 })
 
 // register your room handlers
-gameServer.define('my_room', spotitRoom)
+gameServer.define('my_room', spotit)
 
 /**
  * Register @colyseus/social routes
