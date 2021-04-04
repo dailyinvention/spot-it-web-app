@@ -19,7 +19,7 @@ const gameServer = new Server({
 })
 
 // register your room handlers
-gameServer.define('my_room', spotit)
+gameServer.define('spotit', spotit)
 
 /**
  * Register @colyseus/social routes

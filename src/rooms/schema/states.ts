@@ -1,4 +1,4 @@
-import { Schema, ArraySchema, type } from '@colyseus/schema'
+import { Schema, ArraySchema, MapSchema, type } from '@colyseus/schema'
 
 export class card extends Schema {
   @type(['number'])
@@ -12,24 +12,29 @@ export class card extends Schema {
 
 export class player extends Schema {
   @type('number')
+  playerID: number
+
+  @type('number')
   playerScore: number = 0
 
   @type('string')
-  playerName?: string
+  playerName: string
 
   @type('boolean')
   playerCardMatch?: boolean
 
   @type(card)
-  playerCard: card
+  playerCard?: card
 
   constructor (
+    playerID: number,
     playerScore: number,
     playerName: string,
-    playerCardMatch: boolean,
-    playerCard: card
+    playerCardMatch?: boolean,
+    playerCard?: card
   ) {
     super()
+    this.playerID = playerID
     this.playerName = playerName
     this.playerScore = playerScore
     this.playerCardMatch = playerCardMatch
@@ -38,13 +43,20 @@ export class player extends Schema {
 }
 
 export class tableState extends Schema {
-  @type(['number'])
+  @type(card)
   drawnCard: card
 
-  @type(player)
-  players: player[]
+  @type({ map: player })
+  players: MapSchema<player>
 
-  constructor(drawnCard: card, players: player[]) {
+  createPlayer(sessionId: string) {
+    this.players = !this.players ? new MapSchema<player>() : this.players
+    const playerNumber = this.players.size + 1
+    this.players.set(sessionId, new player(playerNumber, 0, 'Player ' + playerNumber))
+    return this.players.get(sessionId)
+  }
+
+  constructor(drawnCard?: card, players?: MapSchema<player>) {
     super()
     this.drawnCard = drawnCard 
     this.players = players
