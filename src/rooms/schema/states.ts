@@ -56,6 +56,10 @@ export class tableState extends Schema {
     return this.players.get(sessionId)
   }
 
+  deletePlayer(sessionId: string) {
+    this.players.delete(sessionId)
+  }
+
   constructor(drawnCard?: card, players?: MapSchema<player>) {
     super()
     this.drawnCard = drawnCard 

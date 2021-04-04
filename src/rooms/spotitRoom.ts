@@ -22,6 +22,7 @@ export class spotit extends Room {
   }
 
   onLeave (client: Client, consented: boolean) {
+      this.state.deletePlayer(client.sessionId)
   }
 
   onDispose() {

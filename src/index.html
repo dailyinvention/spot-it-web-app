@@ -13,27 +13,36 @@
   </head>
   <body>
     <div id="status"></div>
+    <ul id="opponents"></ul>
 
     <script>
       //var host = window.document.location.host.replace(/:.*/, '')
 
-      var client = new Colyseus.Client('ws://spotit-backend.test:2567')
+      const client = new Colyseus.Client('ws://spotit-backend.test:2567')
       client.joinOrCreate('spotit').then(room => {
         console.log('joined')
-        room.onStateChange.once(function(state) {
+        room.onStateChange.once = state => {
             console.log('initial room state:', state)
-        })
+        }
 
-        // new room state
-        room.onStateChange(function(state) {
-            // this signal is triggered on each patch
-        })
+        room.state.players.onAdd = (player, sessionID) => {
+          if (room.sessionId !== sessionID) {
+            let li = document.createElement('li')
+            li.innerText = player.playerName + ': ' + player.playerScore
+            li.setAttribute('id', sessionID)
+            document.querySelector("#opponents").appendChild(li)
+          }
+        }
 
-        // listen to patches coming from the server
-        room.onMessage("status", function(status) {
-            var div = document.createElement("div")
-            div.innerHTML = 'Player Name: ' + status.playerName + '<br>'
-            div.innerHTML += 'Player Score: ' + status.playerScore + '<br>'
+        room.state.players.onRemove = (player, sessionID) => {
+          document.getElementById(sessionID).remove()
+        }
+
+        // listen for status changes of player
+        room.onMessage('status', function(status) {
+            let div = document.createElement('div')
+            div.innerHTML = status.playerName + '<br>'
+            div.innerHTML += 'Your Score: ' + status.playerScore + '<br>'
 
             document.querySelector("#status").appendChild(div)
         })
