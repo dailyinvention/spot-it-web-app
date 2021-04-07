@@ -9,11 +9,13 @@
 
     <!-- colyseus.js client -->
     <script type="text/javascript" src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
-
+    <script type="text/javascript" src="js/dobble.js"></script>
   </head>
   <body>
     <div id="status"></div>
-    <ul id="opponents"></ul>
+    <ul id="opponents">
+      <h3>Opponents:</h3>
+    </ul>
 
     <script>
       //var host = window.document.location.host.replace(/:.*/, '')
@@ -41,12 +43,14 @@
         // listen for status changes of player
         room.onMessage('status', function(status) {
             let div = document.createElement('div')
-            div.innerHTML = status.playerName + '<br>'
-            div.innerHTML += 'Your Score: ' + status.playerScore + '<br>'
+            div.innerHTML = '<h1>' + status.playerName + '</h1><br>'
+            div.innerHTML += '<h3>Your Score: ' + status.playerScore + '</h3><br>'
 
             document.querySelector("#status").appendChild(div)
         })
       })
+
+      dobble()
 
     </script>
   </body>
