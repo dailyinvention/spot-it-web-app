@@ -65,59 +65,21 @@ function pad(n, width, z) {
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 }
 
-function outputSeries(sTot) {
-  var nPad = sTot.length.toString().length;
-  var cnt = 0;
-  document.write("<div>Printing "+ sTot.length +" series of "+ sTot[0].length +" elements each.</div>");
-  document.write("<pre>");
-  for (var i in sTot) {
-    cnt++;
-    var sLog = "#" + pad(cnt,nPad) + ":";
-    for (var i2 in sTot[i]) {
-      sLog += " " + pad(sTot[i][i2], nPad);
-    } 
-    document.write(sLog + "\n");
-  }
-  document.write("</pre>");
-}
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
 
-// test function
-// compares n pairs of different series randomly taken from sTot 
-// and outputs the results.
-function outputTest(sTot, n) {
-  var nSucc = 0;
-  var nFail = 0;
-  var err = "";
-  for (i = 0; i < n; i++) {
-    var i1 = Math.floor(Math.random() * (sTot.length - 1));
-    var i2 = 0;
-    do {
-      i2 = Math.floor(Math.random() * (sTot.length - 1));
-    }
-    while (i1 == i2);
-    var s1 = sTot[i1];
-    var s2 = sTot[i2];
-    var nEquals = 0;
-    for (var p1 in s1) {
-      for (var p2 in s2) {
-        if (s1[p1] == s2[p2]) {
-          nEquals++;
-        }
-      }
-    }
-    if (nEquals == 1) {
-      nSucc++;
-    }
-    else {
-      nFail++;
-      err += "FAILURES #"+nFail+": Series #"+ s1 +" and series #"+ s2 + " do have "+ nEquals +" numbers in common. +\n";
-    }
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
   }
-  document.write("<pre>");
-  document.write("Test result (after "+n+" tests):\n");
-  document.write("- SUCCESS #: "+nSucc+"\n");
-  document.write("- FAILURE #: "+nFail+"\n");
-  if (nFail > 0) {
-    document.write("<pre>"+ err +"</pre>");
-  }
+
+  return array;
 }
