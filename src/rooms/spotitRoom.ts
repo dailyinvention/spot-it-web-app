@@ -5,15 +5,9 @@ import { tableState } from './schema/states'
 export class spotit extends Room {
 
   onCreate (options: any) {
-    // create new player array
-    //let playerArr = [new player(0, '', false, new card([])), new player(0, '', false, new card([]))]
-
     this.setState(new tableState())
-
-    this.onMessage('type', (client, message) => {
-
-    })
-
+    this.state.getCards()
+    this.state.shuffleDeck()
   }
 
   onJoin (client: Client, options: any) {
