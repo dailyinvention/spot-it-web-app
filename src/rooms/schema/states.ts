@@ -74,6 +74,23 @@ export class tableState extends Schema {
     this.players.delete(sessionId)
   }
 
+  playersReady (sessionId: string) {
+    let player = this.players.get(sessionId)
+    player.isReady = true
+
+    let allPlayersReady = true
+
+    this.players.forEach((player: player) => {
+      if (!player.isReady) {
+        allPlayersReady = false
+      }
+    })
+
+    if (allPlayersReady) {
+      this.assignCards()
+    }
+  }
+
   getCards () {
     var N = 8 // number of symbols on each card
     var nC = 0 // progressive number of cards

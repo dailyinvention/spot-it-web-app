@@ -8,6 +8,10 @@ export class spotit extends Room {
     this.setState(new tableState())
     this.state.getCards()
     this.state.shuffleDeck()
+
+    this.onMessage('ready', (client, data) => {
+      this.state.playerReady(client.sessionId)
+    })
   }
 
   onJoin (client: Client, options: any) {
