@@ -146,12 +146,13 @@ export class tableState extends Schema {
       let winner = this.getWinner(this.players)
       winner.playerCard = this.drawnCard
 
-      // draw main card from the top
+      // draw main card from the top of the deck
       this.drawnCard = this.cardDeck[0]
       this.cardDeck.shift()
       cardsToRemove++
 
       this.players.forEach(player => {
+        // if player is not the winner, draw from the deck
         if (winner.playerID !== player.playerID) {
           player.playerCard= this.cardDeck[cardsToRemove]
           this.cardDeck.shift()
