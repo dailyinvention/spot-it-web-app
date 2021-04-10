@@ -15,6 +15,11 @@
     <ul id="opponents">
       <h3>Opponents:</h3>
     </ul>
+    <div id="tablearea">
+      <div id="main_card"></div>
+      <div id="player_card"></div>
+      <div id="opponent_card"></div>
+    </div>
 
     <script>
       //var host = window.document.location.host.replace(/:.*/, '')
@@ -33,6 +38,10 @@
             li.setAttribute('id', sessionID)
             document.querySelector("#opponents").appendChild(li)
           }
+        }
+
+        room.state.drawnCard.onChange = (card, key) => {
+          console.log(card, 'have changes at', key)
         }
 
         room.state.players.onRemove = (player, sessionID) => {

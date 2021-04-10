@@ -27,12 +27,16 @@ export class player extends Schema {
   @type(card)
   playerCard?: card
 
+  @type('boolean')
+  isWinner?: boolean
+
   constructor (
     playerID: number,
     playerScore: number,
     playerName: string,
     playerCardMatch?: boolean,
-    playerCard?: card
+    playerCard?: card,
+    isWinner?: boolean
   ) {
     super()
     this.playerID = playerID
@@ -40,6 +44,7 @@ export class player extends Schema {
     this.playerScore = playerScore
     this.playerCardMatch = playerCardMatch
     this.playerCard = playerCard
+    this.isWinner = isWinner
   }
 }
 
@@ -121,6 +126,49 @@ export class tableState extends Schema {
       this.cardDeck[currentIndex] = this.cardDeck[randomIndex]
       this.cardDeck[randomIndex] = temporaryValue
     }
+  }
+
+  assignCards () {
+    let cardsToRemove = 0
+    // if the first round draw all cards from the deck for main card and player cards
+    if (this.cardDeck.length === 57) {
+      this.drawnCard = this.cardDeck[0]
+      this.cardDeck.shift()
+      cardsToRemove++
+
+      this.players.forEach(player => {
+        player.playerCard = this.cardDeck[cardsToRemove]
+        this.cardDeck.shift()
+        cardsToRemove++
+      })
+    } else {
+      // set card of winner of the last round to drawn card from last round
+      let winner = this.getWinner(this.players)
+      winner.playerCard = this.drawnCard
+
+      // draw main card from the top
+      this.drawnCard = this.cardDeck[0]
+      this.cardDeck.shift()
+      cardsToRemove++
+
+      this.players.forEach(player => {
+        if (winner.playerID !== player.playerID) {
+          player.playerCard= this.cardDeck[cardsToRemove]
+          this.cardDeck.shift()
+          cardsToRemove++
+        }
+      })
+    }
+  }
+
+  getWinner (players: MapSchema<player>): player {
+    let winnerPlayer = null
+    players.forEach(player => {
+      if (player.isWinner) {
+        winnerPlayer = player
+      }
+    })
+    return winnerPlayer
   }
 
   constructor(drawnCard?: card, players?: MapSchema<player>, cardDeck?: ArraySchema<card>) {
