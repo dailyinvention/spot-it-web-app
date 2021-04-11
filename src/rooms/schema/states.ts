@@ -74,7 +74,7 @@ export class tableState extends Schema {
     this.players.delete(sessionId)
   }
 
-  playersReady (sessionId: string) {
+  playerReady (sessionId: string) {
     let player = this.players.get(sessionId)
     player.isReady = true
 

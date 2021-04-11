@@ -12,6 +12,7 @@
   </head>
   <body>
     <div id="status"></div>
+    <button onclick="ready()" id="ready_button">Ready</button>
     <ul id="opponents">
       <h3>Opponents:</h3>
     </ul>
@@ -25,7 +26,9 @@
       //var host = window.document.location.host.replace(/:.*/, '')
 
       const client = new Colyseus.Client('ws://spotit-backend.test:2567')
-      client.joinOrCreate('spotit').then(room => {
+      let room
+      client.joinOrCreate('spotit').then(room_instance => {
+        room = room_instance
         console.log('joined')
         room.onStateChange.once = state => {
             console.log('initial room state:', state)
@@ -39,6 +42,16 @@
             document.querySelector("#opponents").appendChild(li)
           }
         }
+
+        room.state.players.onChange = (player, sessionID) => {
+          if (player.isReady) {
+            let li = document.getElementById(sessionID)
+            li.classList.add('ready')
+          } else {
+            li.classList.remove('ready')
+          }
+        }
+
 
         room.state.drawnCard.onChange = (card, key) => {
           console.log(card, 'have changes at', key)
@@ -58,6 +71,10 @@
         })
         console.log(room.state)
       })
+
+      function ready () {
+        room.send('ready')
+      }
 
     </script>
   </body>
