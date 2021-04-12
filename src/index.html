@@ -80,8 +80,16 @@
               }
               containerDiv.innerHTML = `
                 <h3>${playerCardName}</h3>
-                <div>${currentValue.symbolSet.join(', ')}</div>
               `
+              let numberDiv = document.createElement('div')
+              if (playerCardName === 'You') {
+                buildClickableLinks(currentValue.symbolSet, numberDiv)
+              } else {
+                numberDiv.innerText = currentValue.symbolSet.join(', ')
+              }
+
+              containerDiv.appendChild(numberDiv)
+
               document.querySelector("#player_cards_container").appendChild(containerDiv)
             }
           })
@@ -118,6 +126,18 @@
 
       function ready () {
         room.send('ready')
+      }
+
+      function buildClickableLinks (numberArray, containerDiv) {
+        let htmlString = ''
+        numberArray.forEach(numberItem => {
+          htmlString += `<a href="#" onclick="sendNumberClicked(${numberItem});return false">${numberItem}</a>, `
+          containerDiv.innerHTML = htmlString
+        })
+      }
+
+      function sendNumberClicked (number) {
+        room.send('clicked', number)
       }
 
     </script>
