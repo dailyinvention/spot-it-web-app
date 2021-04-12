@@ -10,7 +10,7 @@ export class spotit extends Room {
     this.state.shuffleDeck()
 
     this.onMessage('ready', (client) => {
-      this.state.playerReady(client.sessionId)
+      this.state.playersReady(client.sessionId)
     })
   }
 

@@ -5,6 +5,9 @@
 
     <style>
       body { font-family: Tahoma, Geneva, sans-serif }
+      #main_card { display: none; border: 1px solid black; padding: 10px; width: 200px; }
+      .player_card { border: 1px sold black; padding: 10px; width: 200px }
+      .ready { font-weight: bold; }
     </style>
 
     <!-- colyseus.js client -->
@@ -17,16 +20,19 @@
       <h3>Opponents:</h3>
     </ul>
     <div id="tablearea">
-      <div id="main_card"></div>
-      <div id="player_card"></div>
-      <div id="opponent_card"></div>
+      <div id="main_card" class="card">
+        <h3>Card Drawn</h3>
+        <div id="main_card_container"></div>
+      </div>
+      
+      <div id="player_cards_container"></div>
     </div>
 
     <script>
       //var host = window.document.location.host.replace(/:.*/, '')
 
       const client = new Colyseus.Client('ws://spotit-backend.test:2567')
-      let room
+      var room
       client.joinOrCreate('spotit').then(room_instance => {
         room = room_instance
         console.log('joined')
@@ -35,26 +41,64 @@
         }
 
         room.state.players.onAdd = (player, sessionID) => {
-          if (room.sessionId !== sessionID) {
+          let playerCardName
+          if (room.sessionId === sessionID) {
+            // listen for changes on whether the user is ready or not
+            player.listen('isReady', (currentValue, previousValue) => {
+              if (currentValue) {
+                document.getElementById('ready_button').style.display = 'none'
+              } else {
+                document.getElementById('ready_button').style.display = 'block'
+              }
+            })
+            playerCardName = 'You'
+
+          } else {
             let li = document.createElement('li')
             li.innerText = player.playerName + ': ' + player.playerScore
             li.setAttribute('id', sessionID)
             document.querySelector("#opponents").appendChild(li)
+
+            player.listen('isReady', (currentValue, previousValue) => {
+              if (currentValue) {
+                document.getElementById(sessionID).classList.add('ready')
+              } else {
+                document.getElementById(sessionID).classList.remove('ready')
+              }
+            })
+
+            playerCardName = player.playerName
           }
+
+          player.listen('playerCard', (currentValue, previousValue) => {
+            if (currentValue.symbolSet.length > 0) {
+              let containerDiv = document.createElement('div')
+              containerDiv.setAttribute('id', sessionID)
+              containerDiv.classList.add('player_card')
+              if (playerCardName === 'You') {
+                containerDiv.classList.add('your_card')
+              }
+              containerDiv.innerHTML = `
+                <h3>${playerCardName}</h3>
+                <div>${currentValue.symbolSet.join(', ')}</div>
+              `
+              document.querySelector("#player_cards_container").appendChild(containerDiv)
+            }
+          })
         }
 
-        room.state.players.onChange = (player, sessionID) => {
-          if (player.isReady) {
-            let li = document.getElementById(sessionID)
-            li.classList.add('ready')
-          } else {
-            li.classList.remove('ready')
-          }
-        }
-
-
-        room.state.drawnCard.onChange = (card, key) => {
-          console.log(card, 'have changes at', key)
+        room.state.onChange = (changes) => {
+          changes.forEach(change => {
+            switch(change.field) {
+              case 'drawnCard':
+                if (change.value.symbolSet) {
+                  let div = document.getElementById('main_card_container')
+                  div.innerText = change.value.symbolSet.join(', ')
+                  document.getElementById('main_card').style.display = 'block'
+                }
+                break
+            }
+          })
         }
 
         room.state.players.onRemove = (player, sessionID) => {
@@ -64,8 +108,8 @@
         // listen for status changes of player
         room.onMessage('status', function(status) {
             let div = document.createElement('div')
-            div.innerHTML = '<h1>' + status.playerName + '</h1><br>'
-            div.innerHTML += '<h3>Your Score: ' + status.playerScore + '</h3><br>'
+            div.innerHTML = `<h1>${status.playerName}</h1><br>`
+            div.innerHTML += `<h3>Your Score: ${status.playerScore}</h3><br>`
 
             document.querySelector("#status").appendChild(div)
         })

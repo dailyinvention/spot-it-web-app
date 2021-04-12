@@ -66,7 +66,7 @@ export class tableState extends Schema {
   createPlayer (sessionId: string) {
     this.players = !this.players ? new MapSchema<player>() : this.players
     const playerNumber = this.players.size + 1
-    this.players.set(sessionId, new player(playerNumber, 0, 'Player ' + playerNumber))
+    this.players.set(sessionId, new player(playerNumber, 0, 'Player ' + playerNumber, false, false))
     return this.players.get(sessionId)
   }
 
@@ -74,14 +74,17 @@ export class tableState extends Schema {
     this.players.delete(sessionId)
   }
 
-  playerReady (sessionId: string) {
-    let player = this.players.get(sessionId)
-    player.isReady = true
+  playersReady (sessionId: string) {
+    let playerObj = this.players.get(sessionId)
+    console.log(JSON.stringify(playerObj))
+    playerObj.isReady = true
+    this.players.set(sessionId, playerObj)
 
     let allPlayersReady = true
 
+    console.log(JSON.stringify(this.players))
     this.players.forEach((player: player) => {
-      if (!player.isReady) {
+      if (!player.isReady || this.players.size === 1) {
         allPlayersReady = false
       }
     })
@@ -162,13 +165,14 @@ export class tableState extends Schema {
 
     // draw main card from the top of the deck
     this.drawnCard = this.cardDeck[0]
+    console.log(JSON.stringify(this.cardDeck[0]))
     this.cardDeck.shift()
     cardsToRemove++
 
     this.players.forEach(player => {
       // if player is not the winner, draw from the deck
       if (winner === null || winner.playerID !== player.playerID) {
-        player.playerCard= this.cardDeck[cardsToRemove]
+        player.playerCard = this.cardDeck[cardsToRemove]
         this.cardDeck.shift()
         cardsToRemove++
       }
