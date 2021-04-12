@@ -5,6 +5,10 @@
 
     <style>
       body { font-family: Tahoma, Geneva, sans-serif }
+      #statsarea { height: 100%; width: 150px; position: absolute; left: 0; top: 0; padding-top: 40px; background-color: darkred; color: white;}
+      #statsarea div,ul,button { padding: 8px; display: block; }
+      button { margin: 10px; }
+      #tablearea { margin-left: 150px; font-size: 18px; padding-top: 100px; display: flex; justify-content: center; align-items: center;}
       #main_card { display: none; border: 1px solid black; padding: 10px; margin: 10px; width: 200px; }
       .player_card { border: 1px solid black; padding: 10px; margin: 10px; width: 200px }
       .ready { font-weight: bold; }
@@ -14,11 +18,13 @@
     <script type="text/javascript" src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
   </head>
   <body>
-    <div id="status"></div>
-    <button onclick="ready()" id="ready_button">Ready</button>
-    <ul id="opponents">
-      <h3>Opponents:</h3>
-    </ul>
+    <div id="statsarea">
+      <div id="status"></div>
+      <button onclick="ready()" id="ready_button">Ready</button>
+      <ul id="opponents">
+        <h3>Opponents:</h3>
+      </ul>
+    </div>
     <div id="tablearea">
       <div id="main_card" class="card">
         <h3>Card Drawn</h3>
@@ -75,6 +81,7 @@
               let containerDiv = document.createElement('div')
               containerDiv.setAttribute('id', sessionID)
               containerDiv.classList.add('player_card')
+              containerDiv.classList.add('card')
               if (playerCardName === 'You') {
                 containerDiv.classList.add('your_card')
               }
@@ -82,6 +89,7 @@
                 <h3>${playerCardName}</h3>
               `
               let numberDiv = document.createElement('div')
+
               if (playerCardName === 'You') {
                 buildClickableLinks(currentValue.symbolSet, numberDiv)
               } else {
@@ -124,16 +132,17 @@
         console.log(room.state)
       })
 
-      function ready () {
-        room.send('ready')
-      }
-
       function buildClickableLinks (numberArray, containerDiv) {
         let htmlString = ''
-        numberArray.forEach(numberItem => {
-          htmlString += `<a href="#" onclick="sendNumberClicked(${numberItem});return false">${numberItem}</a>, `
+        numberArray.forEach((numberItem, idx) => {
+          commaAppend = idx === numberArray.length - 1 ? '' : ', '
+          htmlString += `<a href="#" onclick="sendNumberClicked(${numberItem});return false">${numberItem}</a>` + commaAppend
           containerDiv.innerHTML = htmlString
         })
+      }
+
+      function ready () {
+        room.send('ready')
       }
 
       function sendNumberClicked (number) {
