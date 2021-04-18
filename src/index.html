@@ -24,6 +24,7 @@
       <ul id="opponents">
         <h3>Opponents:</h3>
       </ul>
+      <div id="card_info"></div>
     </div>
     <div id="tablearea">
       <div id="main_card" class="card">
@@ -133,6 +134,11 @@
                 break
             }
           })
+        }
+
+        room.state.cardDeck.onRemove = (card, key) => {
+          let div = document.getElementById('card_info')
+          div.innerText = `Cards Left: ${room.state.cardDeck.length}`
         }
 
         room.state.players.onRemove = (player, sessionID) => {
