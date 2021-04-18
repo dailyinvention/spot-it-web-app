@@ -20,6 +20,7 @@ export class spotit extends Room {
 
     this.onMessage('new_game', (client) => {
       this.state.resetPlayerReadiness()
+      this.state.resetPlayerScores()
       this.state.getCards()
       this.state.shuffleDeck()
     })

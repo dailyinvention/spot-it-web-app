@@ -100,6 +100,12 @@ export class tableState extends Schema {
     })
   }
 
+  resetPlayerScores () {
+    this.players.forEach((player) => {
+      player.playerScore = 0
+    })
+  }
+
   getCards () {
     var N = 8 // number of symbols on each card
     var nC = 0 // progressive number of cards
