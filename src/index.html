@@ -33,6 +33,7 @@
       </div>
       
       <div id="player_cards_container"></div>
+      <div id="winner_message"></div>
     </div>
 
     <script>
@@ -118,6 +119,42 @@
               })
               
               document.getElementById('main_card').style.display = 'none'
+
+              if (room.state.cardDeck.length - 2 < room.state.players.size) {
+                let div = document.getElementById('winner_message')
+                let gameWinner = {
+                  winnerName: '',
+                  winnerScore: 0
+                }
+                let playerTie = []
+                room.state.players.forEach(player => {
+                  if (player.playerScore > gameWinner.winnerScore) {
+                    playerTie = []
+                    gameWinner.winnerName = player.playerName
+                    gameWinner.winnerScore = player.playerScore
+                  } else if (player.playerScore === gameWinner.winnerScore) {
+                    playerTie = playerTie.concat([{winnerName: player.playerName, winnerScore: player.playerScore}])
+                    gameWinner.winnerName = player.playerName
+                    gameWinner.winnerScore = player.playerScore
+                  }
+                })
+
+                if (playerTie.length > 0) {
+                  let playerNames = ''
+                  playerTie.forEach((playerItem, idx) => {
+                    playerNames += playerItem.winnerName
+                    if (idx !== playerTie.length - 1) {
+                      playerNames += ', '
+                    } else if (idx === playerTie.length -2) {
+                      playerNames += ', and '
+                    }
+                  })
+
+                  div.innerHTML = `Tie Between: ${playerNames}<br />Score: ${playerTie[0].winnerScore}<br /><button onclick="newGame()" id="ready_button">New Game</button>`
+                } else {
+                  div.innerHTML = `Winner: ${gameWinner.winnerName}<br />Score: ${gameWinner.winnerScore}<br /><button onclick="newGame()" id="ready_button">New Game</button>`
+                }
+              }
             }
           })
         }
@@ -167,6 +204,13 @@
 
       function ready () {
         room.send('ready')
+
+      }
+
+      function newGame () {
+        room.send('new_game')
+        let div = document.getElementById('winner_message')
+        div.innerHTML = ''
       }
 
       function sendNumberClicked (number) {

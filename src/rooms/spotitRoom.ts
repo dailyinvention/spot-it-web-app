@@ -17,6 +17,12 @@ export class spotit extends Room {
       console.log('client: ' + JSON.stringify(client))
       this.state.checkCard(client.sessionId, data)
     })
+
+    this.onMessage('new_game', (client) => {
+      this.state.resetPlayerReadiness()
+      this.state.getCards()
+      this.state.shuffleDeck()
+    })
   }
 
   onJoin (client: Client, options: any) {
