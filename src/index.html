@@ -62,7 +62,9 @@
             playerCardName = 'You'
 
             player.listen('playerScore', (currentValue, previousValue) => {
-              document.getElementById('player_score').innerText = `Your Score: ${currentValue}`
+              if (document.getElementById('player_score')) {
+                document.getElementById('player_score').innerText = `Your Score: ${currentValue}`
+              }
             })
 
           } else {
@@ -128,19 +130,18 @@
                 }
                 let playerTie = []
                 room.state.players.forEach(player => {
-                  if (player.playerScore > gameWinner.winnerScore) {
+                  if (player.playerScore === gameWinner.winnerScore || playerTie.length === 0) {
+                    playerTie = playerTie.concat([{winnerName: player.playerName, winnerScore: player.playerScore}])
+                    gameWinner.winnerName = player.playerName
+                    gameWinner.winnerScore = player.playerScore
+                  } else if (player.playerScore > gameWinner.winnerScore) {
                     playerTie = []
                     gameWinner.winnerName = player.playerName
                     gameWinner.winnerScore = player.playerScore
-                  } else if (player.playerScore === gameWinner.winnerScore) {
-                    let playersItems = playerTie.length === 0 ? [gameWinner, {winnerName: player.playerName, winnerScore: player.playerScore}] : [{winnerName: player.playerName, winnerScore: player.playerScore}]
-                    playerTie = playerTie.concat(playersItems)
-                    gameWinner.winnerName = player.playerName
-                    gameWinner.winnerScore = player.playerScore
-                  }
+                  } 
                 })
 
-                if (playerTie.length > 0) {
+                if (playerTie.length > 1) {
                   let playerNames = ''
                   playerTie.forEach((playerItem, idx) => {
                     playerNames += playerItem.winnerName
