@@ -59,6 +59,10 @@
             })
             playerCardName = 'You'
 
+            player.listen('playerScore', (currentValue, previousValue) => {
+              document.getElementById('player_score').innerText = `Your Score: ${currentValue}`
+            })
+
           } else {
             let li = document.createElement('li')
             li.innerText = player.playerName + ': ' + player.playerScore
@@ -74,6 +78,10 @@
             })
 
             playerCardName = player.playerName
+
+            player.listen('playerScore', (currentValue, previousValue) => {
+              li.innerText = player.playerName + ': ' + currentValue
+            })
           }
 
           player.listen('playerCard', (currentValue, previousValue) => {
@@ -125,7 +133,7 @@
         room.onMessage('status', function(status) {
             let div = document.createElement('div')
             div.innerHTML = `<h1>${status.playerName}</h1><br>`
-            div.innerHTML += `<h3>Your Score: ${status.playerScore}</h3><br>`
+            div.innerHTML += `<h3 id="player_score">Your Score: ${status.playerScore}</h3><br>`
 
             document.querySelector("#status").appendChild(div)
         })

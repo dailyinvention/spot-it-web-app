@@ -179,6 +179,29 @@ export class tableState extends Schema {
     })
   }
 
+  checkCard (sessionId: string, cardNumber: number) {
+    console.log('this.drawnCard.symbolSet: ' + JSON.stringify(this.drawnCard.symbolSet))
+    console.log('cardNumber: ' + cardNumber)
+
+    let winnerFound: boolean = false
+
+    if (this.drawnCard.symbolSet.indexOf(cardNumber)) {
+      this.players.forEach((player, key) => {
+        if (key !== sessionId && player.isWinner) {
+          winnerFound = true
+        }  
+      })
+      console.log('winnerFound', winnerFound)
+      if (!winnerFound) {
+        let player = this.players.get(sessionId)
+        player.isWinner = true
+        player.playerScore++ 
+        console.log('player', JSON.stringify(player))
+        this.players.set(sessionId, player)
+      }
+    }
+  }
+
   getWinner (players: MapSchema<player>): player {
     let winnerPlayer = null
     players.forEach(player => {
