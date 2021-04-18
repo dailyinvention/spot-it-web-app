@@ -133,7 +133,8 @@
                     gameWinner.winnerName = player.playerName
                     gameWinner.winnerScore = player.playerScore
                   } else if (player.playerScore === gameWinner.winnerScore) {
-                    playerTie = playerTie.concat([{winnerName: player.playerName, winnerScore: player.playerScore}])
+                    let playersItems = playerTie.length === 0 ? [gameWinner, {winnerName: player.playerName, winnerScore: player.playerScore}] : [{winnerName: player.playerName, winnerScore: player.playerScore}]
+                    playerTie = playerTie.concat(playersItems)
                     gameWinner.winnerName = player.playerName
                     gameWinner.winnerScore = player.playerScore
                   }
