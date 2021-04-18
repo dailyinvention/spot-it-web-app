@@ -94,6 +94,12 @@ export class tableState extends Schema {
     }
   }
 
+  resetPlayerReadiness () {
+    this.players.forEach((player) => {
+      player.isReady = false
+    })
+  }
+
   getCards () {
     var N = 8 // number of symbols on each card
     var nC = 0 // progressive number of cards
@@ -161,6 +167,7 @@ export class tableState extends Schema {
 
     if (winner !== null) {
       winner.playerCard = this.drawnCard
+      winner.isWinner = false
     }
 
     // draw main card from the top of the deck
@@ -185,7 +192,7 @@ export class tableState extends Schema {
 
     let winnerFound: boolean = false
 
-    if (this.drawnCard.symbolSet.indexOf(cardNumber)) {
+    if (this.drawnCard.symbolSet.indexOf(cardNumber) !== -1) {
       this.players.forEach((player, key) => {
         if (key !== sessionId && player.isWinner) {
           winnerFound = true
@@ -198,17 +205,20 @@ export class tableState extends Schema {
         player.playerScore++ 
         console.log('player', JSON.stringify(player))
         this.players.set(sessionId, player)
+        this.resetPlayerReadiness()
       }
     }
   }
 
   getWinner (players: MapSchema<player>): player {
     let winnerPlayer = null
+    console.log('players', JSON.stringify(players))
     players.forEach(player => {
       if (player.isWinner) {
         winnerPlayer = player
       }
     })
+    console.log('winnerPlayer', winnerPlayer)
     return winnerPlayer
   }
 

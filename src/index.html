@@ -109,6 +109,16 @@
               document.querySelector("#player_cards_container").appendChild(containerDiv)
             }
           })
+
+          player.listen('isWinner', (currentValue, previousValue) => {
+            if (currentValue) {
+              document.querySelectorAll('.player_card').forEach((card) => {
+                card.remove()
+              })
+              
+              document.getElementById('main_card').style.display = 'none'
+            }
+          })
         }
 
         room.state.onChange = (changes) => {
