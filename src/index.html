@@ -5,6 +5,7 @@
 
     <style>
       body { font-family: Tahoma, Geneva, sans-serif }
+      object{ pointer-events: none; }
       #statsarea { height: 100%; width: 150px; position: absolute; left: 0; top: 0; padding-top: 40px; background-color: darkred; color: white;}
       #statsarea div,ul,button { padding: 8px; display: block; }
       button { margin: 10px; }
@@ -103,9 +104,9 @@
               let numberDiv = document.createElement('div')
 
               if (playerCardName === 'You') {
-                buildClickableLinks(currentValue.symbolSet, numberDiv)
+                buildLinks(currentValue.symbolSet, numberDiv, true)
               } else {
-                numberDiv.innerText = currentValue.symbolSet.join(', ')
+                buildLinks(currentValue.symbolSet, numberDiv, false)
               }
 
               containerDiv.appendChild(numberDiv)
@@ -167,7 +168,8 @@
               case 'drawnCard':
                 if (change.value.symbolSet) {
                   let div = document.getElementById('main_card_container')
-                  div.innerText = change.value.symbolSet.join(', ')
+                  buildLinks(change.value.symbolSet, div, false)
+                  //div.innerText = change.value.symbolSet.join(', ')
                   document.getElementById('main_card').style.display = 'block'
                 }
                 break
@@ -195,11 +197,11 @@
         console.log(room.state)
       })
 
-      function buildClickableLinks (numberArray, containerDiv) {
+      function buildLinks (numberArray, containerDiv, clickable) {
         let htmlString = ''
         numberArray.forEach((numberItem, idx) => {
-          commaAppend = idx === numberArray.length - 1 ? '' : ', '
-          htmlString += `<a href="#" onclick="sendNumberClicked(${numberItem});return false">${numberItem}</a>` + commaAppend
+          let clickableString = clickable ? `onclick="sendNumberClicked(${numberItem});return false"` : ''
+          htmlString += `<img src="assets/${numberItem}.svg" ${clickableString} />`
           containerDiv.innerHTML = htmlString
         })
       }
