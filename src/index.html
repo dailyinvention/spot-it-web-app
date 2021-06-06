@@ -6,8 +6,11 @@
     <style>
       body { font-family: Tahoma, Geneva, sans-serif; background-image: url('assets/table_grain.jpg'); }
       object{ pointer-events: none; }
-      #statsarea { height: 100%; width: 150px; position: absolute; left: 0; top: 0; padding-top: 40px; background-color: darkred; color: white;}
-      #statsarea div,ul,button { padding: 8px; display: block; }
+      #statsarea { height: 100%; width: 150px; position: absolute; left: 0; top: 0; padding-top: 40px; padding-left: 20px; color: white; position: fixed;}
+      #statsarea div,ul,button { padding: 8px; }
+      #statsarea ul { list-style: none }
+      #status { display: block; background-color: darkred; }
+      #card_info, #opponents { display: none; background-color: darkred; }
       button { margin: 10px; }
       #tablearea { margin-left: 150px; font-size: 18px; padding-top: 50px; display: flex; justify-content: center; align-items: center;}
       #main_card { display: none; border: 1px solid black; padding: 10px; margin: 10px; }
@@ -24,11 +27,11 @@
   <body>
     <div id="statsarea">
       <div id="status"></div>
-      <button onclick="ready()" id="ready_button">Ready</button>
       <ul id="opponents">
         <h3>Opponents:</h3>
       </ul>
       <div id="card_info"></div>
+      <button onclick="ready()" id="ready_button">Ready</button>
     </div>
     <div id="tablearea">
       <div id="main_card" class="card">
@@ -54,6 +57,7 @@
 
         room.state.players.onAdd = (player, sessionID) => {
           let playerCardName
+          
           if (room.sessionId === sessionID) {
             // listen for changes on whether the user is ready or not
             player.listen('isReady', (currentValue, previousValue) => {
@@ -75,7 +79,10 @@
             let li = document.createElement('li')
             li.innerText = player.playerName + ': ' + player.playerScore
             li.setAttribute('id', sessionID)
-            document.querySelector("#opponents").appendChild(li)
+            let oppponents = document.querySelector("#opponents")
+            oppponents.appendChild(li)
+            oppponents.style.display = 'block'
+
 
             player.listen('isReady', (currentValue, previousValue) => {
               if (currentValue) {
@@ -184,7 +191,9 @@
 
         room.state.cardDeck.onRemove = (card, key) => {
           let div = document.getElementById('card_info')
+          div.style.display = 'block'
           div.innerText = `Cards Left: ${room.state.cardDeck.length}`
+          document.getElementById('ready_button').style.display = 'block'
         }
 
         room.state.players.onRemove = (player, sessionID) => {
@@ -238,6 +247,7 @@
         room.send('new_game')
         let div = document.getElementById('winner_message')
         div.innerHTML = ''
+        document.getElementById('card_info').style.display = 'none'
       }
 
       function sendNumberClicked (number) {
