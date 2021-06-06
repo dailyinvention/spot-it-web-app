@@ -4,15 +4,18 @@
     <meta name="viewport" content="width=device-width" />
 
     <style>
-      body { font-family: Tahoma, Geneva, sans-serif }
+      body { font-family: Tahoma, Geneva, sans-serif; background-image: url('assets/table_grain.jpg'); }
       object{ pointer-events: none; }
       #statsarea { height: 100%; width: 150px; position: absolute; left: 0; top: 0; padding-top: 40px; background-color: darkred; color: white;}
       #statsarea div,ul,button { padding: 8px; display: block; }
       button { margin: 10px; }
-      #tablearea { margin-left: 150px; font-size: 18px; padding-top: 100px; display: flex; justify-content: center; align-items: center;}
-      #main_card { display: none; border: 1px solid black; padding: 10px; margin: 10px; width: 200px; }
-      .player_card { border: 1px solid black; padding: 10px; margin: 10px; width: 200px }
+      #tablearea { margin-left: 150px; font-size: 18px; padding-top: 50px; display: flex; justify-content: center; align-items: center;}
+      #main_card { display: none; border: 1px solid black; padding: 10px; margin: 10px; }
+      .player_card { border: 1px solid black; padding: 10px; margin: 10px; }
       .ready { font-weight: bold; }
+      .your_card img { cursor: pointer; }
+      .card { width: 330px; background-color: white; }
+      .card img { width: 80px; height: 80px; }
     </style>
 
     <!-- colyseus.js client -->
@@ -103,10 +106,12 @@
               `
               let numberDiv = document.createElement('div')
 
+              var shuffledSymbols = shuffleSymbols(currentValue.symbolSet)
+
               if (playerCardName === 'You') {
-                buildLinks(currentValue.symbolSet, numberDiv, true)
+                buildLinks(shuffledSymbols, numberDiv, true)
               } else {
-                buildLinks(currentValue.symbolSet, numberDiv, false)
+                buildLinks(shuffledSymbols, numberDiv, false)
               }
 
               containerDiv.appendChild(numberDiv)
@@ -168,8 +173,8 @@
               case 'drawnCard':
                 if (change.value.symbolSet) {
                   let div = document.getElementById('main_card_container')
-                  buildLinks(change.value.symbolSet, div, false)
-                  //div.innerText = change.value.symbolSet.join(', ')
+                  const shuffledSymbols = shuffleSymbols(change.value.symbolSet)
+                  buildLinks(shuffledSymbols, div, false)
                   document.getElementById('main_card').style.display = 'block'
                 }
                 break
@@ -204,6 +209,24 @@
           htmlString += `<img src="assets/${numberItem}.svg" ${clickableString} />`
           containerDiv.innerHTML = htmlString
         })
+      }
+
+      function shuffleSymbols (array) {
+        var currentIndex = array.length, randomIndex
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex)
+          currentIndex--
+
+          // And swap it with the current element.
+          [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]]
+        }
+
+        return array
       }
 
       function ready () {
