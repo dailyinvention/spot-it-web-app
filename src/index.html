@@ -14,7 +14,7 @@
       #tablearea { font-size: 18px; display: flex; justify-content: center; align-items: center;}
       #main_card { display: none; border: 1px solid black; padding: 10px; margin: 10px; position: fixed; left: 200px; top: 30px; width: 430px !important}
       #player_cards_container { margin-left: 500px; margin-top: 21px; }
-      #winner_message { display: block; left: 50%; top: 45px; margin-left: -160px; position: absolute; background-color: darkred; width: 300px; color: white; padding: 10px; }
+      #winner_message { display: block; left: 50%; top: 45px; margin-left: -160px; position: absolute; background-color: darkred; width: 300px; color: white; padding: 10px; display: none; }
       #main_card img { width: 90px; height: 90px; }
       .player_card { border: 1px solid black; padding: 10px; margin: 10px; }
       .ready { font-weight: bold; }
@@ -166,7 +166,7 @@
                       playerNames += ', and '
                     }
                   })
-
+                  div.style.display = 'block'
                   div.innerHTML = `Tie Between: ${playerNames}<br />Score: ${playerTie[0].winnerScore}<br /><button onclick="newGame()" id="ready_button">New Game</button>`
                 } else {
                   div.innerHTML = `Winner: ${gameWinner.winnerName}<br />Score: ${gameWinner.winnerScore}<br /><button onclick="newGame()" id="ready_button">New Game</button>`
@@ -250,6 +250,7 @@
         let div = document.getElementById('winner_message')
         div.innerHTML = ''
         document.getElementById('card_info').style.display = 'none'
+        document.getElementById('winner_message').style.display = 'none'
       }
 
       function sendNumberClicked (number) {
